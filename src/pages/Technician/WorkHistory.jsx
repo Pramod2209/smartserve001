@@ -43,6 +43,21 @@ const WorkHistory = () => {
     [jobs]
   );
 
+  const completedThisMonth = useMemo(() => {
+    const now = new Date();
+    return completedJobs.filter((job) => {
+      if (!job.date) return false;
+      const jobDate = new Date(`${job.date}T00:00:00`);
+      return jobDate.getFullYear() === now.getFullYear()
+        && jobDate.getMonth() === now.getMonth();
+    }).length;
+  }, [completedJobs]);
+
+  const completionRate = useMemo(() => {
+    if (jobs.length === 0) return 0;
+    return Math.round((completedJobs.length / jobs.length) * 100);
+  }, [completedJobs.length, jobs.length]);
+
   const breadcrumbItems = [
     { label: 'Dashboard', path: '/technician/dashboard' },
     { label: 'Work History' },
@@ -116,11 +131,11 @@ const WorkHistory = () => {
         </div>
         <div className="card">
           <h3 className="text-sm text-gray-600 mb-2">This Month</h3>
-          <p className="text-3xl font-bold text-gray-900">{completedJobs.length}</p>
+          <p className="text-3xl font-bold text-gray-900">{completedThisMonth}</p>
         </div>
         <div className="card">
           <h3 className="text-sm text-gray-600 mb-2">Success Rate</h3>
-          <p className="text-3xl font-bold text-green-600">100%</p>
+          <p className="text-3xl font-bold text-green-600">{completionRate}%</p>
         </div>
       </div>
 

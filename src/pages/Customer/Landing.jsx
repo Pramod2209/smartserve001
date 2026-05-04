@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Wrench, 
-  Zap, 
-  Droplet, 
-  Wind, 
+import {
+  Wrench,
+  Zap,
+  Droplet,
+  Wind,
   CheckCircle,
   Clock,
   Shield,
@@ -18,12 +18,21 @@ import {
 import DarkVeil from '../../components/DarkVeil';
 import MagicBento from '../../components/MagicBento';
 import PixelCard from '../../components/PixelCard';
+import GooeyNav from '../../components/GooeyNav';
+import Aurora from '../../components/Aurora';
 
 /**
  * Landing Page with Hero Section
  * Public-facing page describing Smart Serve application
  */
 const Landing = () => {
+  const gooeyNavItems = [
+    { label: "Home", href: "#hero" },
+    { label: "Services", href: "#services" },
+    { label: "Why Us", href: "#features" },
+    { label: "Contact", href: "#footer" },
+  ];
+
   const services = [
     {
       icon: <Zap className="w-8 h-8" />,
@@ -92,24 +101,41 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navigation Bar */}
-      <nav className="bg-white shadow-sm">
+      {/* Navigation Bar with GooeyNav */}
+      <nav className="bg-gray-950 sticky top-0 z-50 shadow-lg shadow-black/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
+            {/* Logo */}
             <div className="flex items-center">
               <img src="/logo.png" alt="Smart Serve Logo" className="h-12 w-auto mr-3 object-contain" />
-              <span className="text-2xl font-bold text-gray-900">Smart Serve</span>
+              <span className="text-2xl font-bold text-white">Smart Serve</span>
             </div>
-            <div className="flex space-x-4">
+
+            {/* GooeyNav in center */}
+            <div className="hidden md:flex items-center">
+              <GooeyNav
+                items={gooeyNavItems}
+                particleCount={15}
+                particleDistances={[90, 10]}
+                particleR={100}
+                initialActiveIndex={0}
+                animationTime={600}
+                timeVariance={300}
+                colors={[1, 2, 3, 1, 2, 3, 1, 4]}
+              />
+            </div>
+
+            {/* Auth Links */}
+            <div className="flex items-center space-x-3">
               <Link
                 to="/login"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+                className="text-gray-300 hover:text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Login
               </Link>
               <Link
                 to="/register/customer"
-                className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium"
+                className="bg-blue-600 text-white hover:bg-blue-500 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 shadow-md shadow-blue-600/30 hover:shadow-blue-500/40"
               >
                 Sign Up
               </Link>
@@ -119,10 +145,10 @@ const Landing = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white overflow-hidden min-h-[calc(100vh-4rem)]">
+      <section id="hero" className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white overflow-hidden min-h-[calc(100vh-4rem)]">
         {/* Animated Background - Absolutely positioned to fill entire section */}
         <div className="absolute inset-0 w-full h-full z-0">
-          <DarkVeil 
+          <DarkVeil
             speed={0.5}
             hueShift={-20}
             noiseIntensity={0.03}
@@ -132,10 +158,10 @@ const Landing = () => {
             resolutionScale={0.8}
           />
         </div>
-        
+
         {/* Overlay for better text readability */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-transparent to-indigo-900/30 z-[1]"></div>
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 relative z-10 flex items-center min-h-[calc(100vh-4rem)]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
             {/* Hero Content */}
@@ -146,7 +172,7 @@ const Landing = () => {
                   <span className="block text-blue-200">Simplified</span>
                 </h1>
                 <p className="text-xl text-blue-100 mb-8">
-                  Connect with verified, professional technicians for all your home service needs. 
+                  Connect with verified, professional technicians for all your home service needs.
                   From plumbing to electrical work, we've got you covered.
                 </p>
               </div>
@@ -233,13 +259,13 @@ const Landing = () => {
         {/* Wave decoration */}
         <div className="absolute bottom-0 left-0 right-0 z-[2]">
           <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="#F9FAFB"/>
+            <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="#F9FAFB" />
           </svg>
         </div>
       </section>
 
       {/* Services Section */}
-      <section className="py-20 bg-gray-50">
+      <section id="services" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -272,7 +298,7 @@ const Landing = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white">
+      <section id="features" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -302,17 +328,25 @@ const Landing = () => {
       </section>
 
       {/* Call to Action Section */}
-      <section className="text-white">
-        <PixelCard
-          variant="blue"
-          className="w-full py-20 bg-gradient-to-r from-blue-600 to-indigo-700"
-        >
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="rounded-2xl px-6 py-14 sm:px-10 sm:py-16 text-center bg-transparent border border-white/20">
+      <section className="relative text-white overflow-hidden bg-black">
+        {/* Aurora Background */}
+        <div className="absolute inset-0 z-0">
+          <Aurora
+            colorStops={["#7c3aed", "#c026d3", "#4f46e5"]}
+            blend={0.5}
+            amplitude={1.0}
+            speed={0.5}
+          />
+        </div>
+        {/* Dark base behind Aurora for depth */}
+        <div className="absolute inset-0 bg-black z-[-1]"></div>
+
+        <div className="relative z-10 py-24">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
               Ready to Get Started?
             </h2>
-            <p className="text-xl text-blue-100 mb-8">
+            <p className="text-xl text-blue-100/80 mb-10 max-w-2xl mx-auto">
               Join thousands of satisfied customers who trust Smart Serve for their home service needs
             </p>
             <Link
@@ -321,13 +355,12 @@ const Landing = () => {
             >
               Create Your Account
             </Link>
-            </div>
           </div>
-        </PixelCard>
+        </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300 py-12">
+      <footer id="footer" className="bg-black text-gray-300 py-12 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
@@ -356,7 +389,7 @@ const Landing = () => {
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-white">
             <p>&copy; {new Date().getFullYear()} Smart Serve. All rights reserved.</p>
           </div>
         </div>

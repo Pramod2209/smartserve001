@@ -9,25 +9,28 @@ import DotGrid from '../components/DotGrid';
  */
 const AuthLayout = ({ children }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 relative">
+    <div className="min-h-screen flex flex-col bg-gray-950 relative">
       {/* DotGrid background */}
-      <div className="absolute inset-0 z-0">
-        <DotGrid 
-          dotSize={8}
-          gap={35}
-          baseColor="#cbd5e1"
-          activeColor="#2563eb"
+      <div className="absolute inset-0 z-0 opacity-40">
+        <DotGrid
+          dotSize={10}
+          gap={15}
+          baseColor="#2F293A"
+          activeColor="#ffffff"
           proximity={120}
-          shockRadius={200}
+          shockRadius={250}
+          shockStrength={5}
+          resistance={750}
+          returnDuration={1.5}
         />
       </div>
 
       {/* Simple header */}
-      <header className="bg-white border-b border-gray-200 py-4 relative z-10">
+      <header className="bg-gray-950/80 border-b border-gray-800 py-4 relative z-10 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6">
           <Link to="/" className="flex items-center space-x-3">
             <img src="/logo.png" alt="Smart Serve Logo" className="h-12 w-auto object-contain" />
-            <span className="text-2xl font-bold text-gray-900">
+            <span className="text-2xl font-bold text-white">
               Smart Serve
             </span>
           </Link>

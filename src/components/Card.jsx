@@ -4,14 +4,14 @@ import React from 'react';
  * Reusable card component for displaying metrics and summaries
  * Commonly used in dashboards
  */
-const Card = ({ 
-  title, 
-  value, 
-  icon: Icon, 
-  bgColor = 'bg-primary-50', 
+const Card = ({
+  title,
+  value,
+  icon: Icon,
+  bgColor = 'bg-primary-50',
   iconColor = 'text-primary-600',
   subtitle = null,
-  children 
+  children
 }) => {
   return (
     <div className="card hover:shadow-md transition-shadow">
@@ -37,9 +37,9 @@ const Card = ({
           </div>
         </div>
       )}
-      
+
       {children && <div className="mt-4">{children}</div>}
-      
+
       {!Icon && !children && title && (
         <>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">

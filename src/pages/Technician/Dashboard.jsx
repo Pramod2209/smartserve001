@@ -5,7 +5,7 @@ import Card from '../../components/Card';
 import Badge from '../../components/Badge';
 import Alert from '../../components/Alert';
 import { TECHNICIAN_MENU } from '../../utils/menuConfig';
-import { bookingsAPI, getUser } from '../../utils/api';
+import { authAPI, bookingsAPI, getUser } from '../../utils/api';
 
 /**
  * Technician Dashboard
@@ -15,6 +15,7 @@ const TechnicianDashboard = () => {
   const currentUser = getUser();
   const [bookings, setBookings] = useState([]);
   const [error, setError] = useState('');
+  const [techStats, setTechStats] = useState({ rating: 0, totalJobs: 0 });
 
   useEffect(() => {
     const loadBookings = async () => {
@@ -26,7 +27,21 @@ const TechnicianDashboard = () => {
       }
     };
 
+    const loadTechnicianStats = async () => {
+      try {
+        const response = await authAPI.getMe();
+        const tech = response.user?.technicianInfo || {};
+        setTechStats({
+          rating: Number(tech.rating || 0),
+          totalJobs: Number(tech.total_jobs || 0),
+        });
+      } catch (err) {
+        setError(err.message || 'Failed to load technician stats');
+      }
+    };
+
     loadBookings();
+    loadTechnicianStats();
   }, []);
 
   const normalizedJobs = useMemo(
@@ -48,6 +63,13 @@ const TechnicianDashboard = () => {
   const upcomingJobs = normalizedJobs
     .filter((j) => j.status === 'assigned' || j.status === 'in-progress')
     .slice(0, 5);
+  const completedThisMonth = normalizedJobs.filter((j) => {
+    if (!j.date || j.status !== 'completed') return false;
+    const jobDate = new Date(`${j.date}T00:00:00`);
+    const now = new Date();
+    return jobDate.getFullYear() === now.getFullYear()
+      && jobDate.getMonth() === now.getMonth();
+  }).length;
 
   return (
     <DashboardLayout
@@ -152,11 +174,11 @@ const TechnicianDashboard = () => {
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Jobs Completed</span>
-              <span className="font-bold text-gray-900">8</span>
+              <span className="font-bold text-gray-900">{completedThisMonth}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Hours Worked</span>
-              <span className="font-bold text-gray-900">42</span>
+              <span className="text-gray-600">Total Jobs</span>
+              <span className="font-bold text-gray-900">{techStats.totalJobs}</span>
             </div>
           </div>
         </div>
@@ -168,11 +190,13 @@ const TechnicianDashboard = () => {
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Avg. Rating</span>
-              <span className="font-bold text-gray-900">4.8 ⭐</span>
+              <span className="font-bold text-gray-900">
+                {techStats.rating.toFixed(1)} ⭐
+              </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">On-Time Rate</span>
-              <span className="font-bold text-green-600">95%</span>
+              <span className="text-gray-600">Completed Jobs</span>
+              <span className="font-bold text-green-600">{completedJobs}</span>
             </div>
           </div>
         </div>

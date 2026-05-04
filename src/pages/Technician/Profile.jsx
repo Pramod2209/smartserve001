@@ -330,10 +330,6 @@ const TechnicianProfile = () => {
                 <p className="text-sm text-gray-600 mb-1">Jobs Completed</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.totalJobs}</p>
               </div>
-              <div>
-                <p className="text-sm text-gray-600 mb-1">On-Time Rate</p>
-                <p className="text-2xl font-bold text-green-600">95%</p>
-              </div>
             </div>
           </div>
 

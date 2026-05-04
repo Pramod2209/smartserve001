@@ -90,14 +90,14 @@ const TechnicianRegister = () => {
       <div className="w-full max-w-2xl">
         {/* Back to Home Link */}
         <div className="mb-4">
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className="text-blue-600 hover:text-blue-700 font-medium flex items-center"
           >
             ← Back to Home
           </Link>
         </div>
-        
+
         <div className="card">
           {/* Header */}
           <div className="text-center mb-8">
