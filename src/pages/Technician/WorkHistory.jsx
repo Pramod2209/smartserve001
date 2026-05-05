@@ -15,6 +15,27 @@ const WorkHistory = () => {
   const currentUser = getUser();
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState('');
+  const TECH_EARNING_RATE = 0.8;
+
+  const parseJobDate = (value) => {
+    if (!value) return null;
+    const direct = new Date(value);
+    if (!Number.isNaN(direct.getTime())) return direct;
+    const normalized = new Date(`${value}T00:00:00`);
+    return Number.isNaN(normalized.getTime()) ? null : normalized;
+  };
+
+  const parsePriceValue = (value) => {
+    if (value === null || value === undefined) return 0;
+    if (typeof value === 'number') return value;
+    const match = String(value).match(/[\d,.]+/);
+    if (!match) return 0;
+    const numeric = Number(match[0].replace(/,/g, ''));
+    return Number.isNaN(numeric) ? 0 : numeric;
+  };
+
+  const formatCurrency = (value) =>
+    `₹${Number(value).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
 
   useEffect(() => {
     const loadJobs = async () => {
@@ -39,6 +60,8 @@ const WorkHistory = () => {
         date: job.booking_date,
         address: job.address,
         status: job.status,
+        servicePrice: parsePriceValue(job.service_price),
+        income: parsePriceValue(job.service_price) * TECH_EARNING_RATE,
       })),
     [jobs]
   );
@@ -47,7 +70,8 @@ const WorkHistory = () => {
     const now = new Date();
     return completedJobs.filter((job) => {
       if (!job.date) return false;
-      const jobDate = new Date(`${job.date}T00:00:00`);
+      const jobDate = parseJobDate(job.date);
+      if (!jobDate) return false;
       return jobDate.getFullYear() === now.getFullYear()
         && jobDate.getMonth() === now.getMonth();
     }).length;
@@ -57,6 +81,24 @@ const WorkHistory = () => {
     if (jobs.length === 0) return 0;
     return Math.round((completedJobs.length / jobs.length) * 100);
   }, [completedJobs.length, jobs.length]);
+
+  const totalIncome = useMemo(
+    () => completedJobs.reduce((sum, job) => sum + job.income, 0),
+    [completedJobs]
+  );
+
+  const incomeThisMonth = useMemo(() => {
+    const now = new Date();
+    return completedJobs.reduce((sum, job) => {
+      if (!job.date) return sum;
+      const jobDate = parseJobDate(job.date);
+      if (!jobDate) return sum;
+      if (jobDate.getFullYear() !== now.getFullYear() || jobDate.getMonth() !== now.getMonth()) {
+        return sum;
+      }
+      return sum + job.income;
+    }, 0);
+  }, [completedJobs]);
 
   const breadcrumbItems = [
     { label: 'Dashboard', path: '/technician/dashboard' },
@@ -122,7 +164,7 @@ const WorkHistory = () => {
       )}
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="card">
           <h3 className="text-sm text-gray-600 mb-2">Total Completed</h3>
           <p className="text-3xl font-bold text-gray-900">
@@ -136,6 +178,11 @@ const WorkHistory = () => {
         <div className="card">
           <h3 className="text-sm text-gray-600 mb-2">Success Rate</h3>
           <p className="text-3xl font-bold text-green-600">{completionRate}%</p>
+        </div>
+        <div className="card">
+          <h3 className="text-sm text-gray-600 mb-2">Income Earned</h3>
+          <p className="text-3xl font-bold text-blue-600">{formatCurrency(totalIncome)}</p>
+          <p className="text-xs text-gray-500 mt-1">This month: {formatCurrency(incomeThisMonth)}</p>
         </div>
       </div>
 

@@ -11,16 +11,17 @@ const DashboardLayout = ({
   children, 
   userRole = 'customer', 
   userName = 'User',
-  menuItems = [] 
+  menuItems = [],
+  hideSidebar = false,
 }) => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar userRole={userRole} userName={userName} />
       
       <div className="flex flex-1 pt-16">
-        <Sidebar menuItems={menuItems} />
+        {!hideSidebar && <Sidebar menuItems={menuItems} />}
         
-        <main className="flex-1 ml-64 p-8">
+        <main className={`flex-1 p-8 ${hideSidebar ? '' : 'ml-64'}`}>
           <div className="max-w-7xl mx-auto">
             {children}
           </div>

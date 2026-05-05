@@ -36,8 +36,53 @@ export const removeUser = () => {
 /**
  * Make API request
  */
+const buildCacheKey = (baseKey, token) => {
+  if (!baseKey) return null;
+  const tokenSuffix = token ? token.slice(-10) : 'anon';
+  return `${baseKey}:${tokenSuffix}`;
+};
+
+const readCache = (key) => {
+  if (!key) return null;
+  try {
+    const raw = sessionStorage.getItem(key);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return null;
+    if (parsed.expiresAt && Date.now() > parsed.expiresAt) {
+      sessionStorage.removeItem(key);
+      return null;
+    }
+    return parsed.value;
+  } catch {
+    return null;
+  }
+};
+
+const writeCache = (key, value, ttlMs) => {
+  if (!key || !ttlMs) return;
+  try {
+    const payload = {
+      value,
+      expiresAt: Date.now() + ttlMs,
+    };
+    sessionStorage.setItem(key, JSON.stringify(payload));
+  } catch {
+    // Ignore cache errors.
+  }
+};
+
 const apiRequest = async (endpoint, options = {}) => {
   const token = getToken();
+  const method = (options.method || 'GET').toUpperCase();
+  const cacheKey = buildCacheKey(options.cacheKey, token);
+
+  if (method === 'GET' && cacheKey) {
+    const cached = readCache(cacheKey);
+    if (cached !== null) {
+      return cached;
+    }
+  }
   
   const config = {
     ...options,
@@ -60,6 +105,10 @@ const apiRequest = async (endpoint, options = {}) => {
       throw new Error(data.message || 'Something went wrong');
     }
 
+    if (method === 'GET' && cacheKey) {
+      writeCache(cacheKey, data, options.cacheTtlMs);
+    }
+
     return data;
   } catch (error) {
     console.error('API Error:', error);
@@ -79,7 +128,7 @@ export const authAPI = {
     body: JSON.stringify(credentials),
   }),
 
-  getMe: () => apiRequest('/auth/me'),
+  getMe: () => apiRequest('/auth/me', { cacheKey: 'auth:me', cacheTtlMs: 30000 }),
 };
 
 // Services API
@@ -105,7 +154,7 @@ export const servicesAPI = {
 
 // Bookings API
 export const bookingsAPI = {
-  getAll: () => apiRequest('/bookings'),
+  getAll: () => apiRequest('/bookings', { cacheKey: 'bookings:all', cacheTtlMs: 15000 }),
   
   getById: (id) => apiRequest(`/bookings/${id}`),
   

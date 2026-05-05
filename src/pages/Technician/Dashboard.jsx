@@ -16,6 +16,27 @@ const TechnicianDashboard = () => {
   const [bookings, setBookings] = useState([]);
   const [error, setError] = useState('');
   const [techStats, setTechStats] = useState({ rating: 0, totalJobs: 0 });
+  const TECH_EARNING_RATE = 0.8;
+
+  const parseJobDate = (value) => {
+    if (!value) return null;
+    const direct = new Date(value);
+    if (!Number.isNaN(direct.getTime())) return direct;
+    const normalized = new Date(`${value}T00:00:00`);
+    return Number.isNaN(normalized.getTime()) ? null : normalized;
+  };
+
+  const parsePriceValue = (value) => {
+    if (value === null || value === undefined) return 0;
+    if (typeof value === 'number') return value;
+    const match = String(value).match(/[\d,.]+/);
+    if (!match) return 0;
+    const numeric = Number(match[0].replace(/,/g, ''));
+    return Number.isNaN(numeric) ? 0 : numeric;
+  };
+
+  const formatCurrency = (value) =>
+    `₹${Number(value).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
 
   useEffect(() => {
     const loadBookings = async () => {
@@ -53,6 +74,7 @@ const TechnicianDashboard = () => {
       date: job.booking_date,
       time: job.booking_time,
       status: job.status,
+      servicePrice: parsePriceValue(job.service_price),
     })),
     [bookings]
   );
@@ -65,11 +87,29 @@ const TechnicianDashboard = () => {
     .slice(0, 5);
   const completedThisMonth = normalizedJobs.filter((j) => {
     if (!j.date || j.status !== 'completed') return false;
-    const jobDate = new Date(`${j.date}T00:00:00`);
+    const jobDate = parseJobDate(j.date);
+    if (!jobDate) return false;
     const now = new Date();
     return jobDate.getFullYear() === now.getFullYear()
       && jobDate.getMonth() === now.getMonth();
   }).length;
+
+  const totalIncome = normalizedJobs
+    .filter((j) => j.status === 'completed')
+    .reduce((sum, job) => sum + job.servicePrice * TECH_EARNING_RATE, 0);
+
+  const incomeThisMonth = normalizedJobs
+    .filter((j) => j.status === 'completed')
+    .reduce((sum, job) => {
+      if (!job.date) return sum;
+      const jobDate = parseJobDate(job.date);
+      if (!jobDate) return sum;
+      const now = new Date();
+      if (jobDate.getFullYear() !== now.getFullYear() || jobDate.getMonth() !== now.getMonth()) {
+        return sum;
+      }
+      return sum + job.servicePrice * TECH_EARNING_RATE;
+    }, 0);
 
   return (
     <DashboardLayout
@@ -97,7 +137,7 @@ const TechnicianDashboard = () => {
       )}
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card
           title="Assigned Jobs"
           value={assignedJobs}
@@ -121,6 +161,14 @@ const TechnicianDashboard = () => {
           bgColor="bg-green-50"
           iconColor="text-green-600"
           subtitle="Total completed"
+        />
+        <Card
+          title="Income Earned"
+          value={formatCurrency(totalIncome)}
+          icon={CheckCircle}
+          bgColor="bg-blue-50"
+          iconColor="text-blue-600"
+          subtitle={`This month: ${formatCurrency(incomeThisMonth)}`}
         />
       </div>
 

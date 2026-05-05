@@ -256,11 +256,11 @@ const TechnicianProfile = () => {
                   disabled={!isEditing}
                   className="input disabled:bg-gray-50 disabled:text-gray-600"
                 >
-                  <option value="Electrician">Electrician</option>
-                  <option value="Plumber">Plumber</option>
-                  <option value="Cleaning">Cleaning</option>
-                  <option value="AC Repair">AC Repair</option>
-                  <option value="Appliance Repair">Appliance Repair</option>
+                  <option value="electrician">Electrician</option>
+                  <option value="plumber">Plumber</option>
+                  <option value="cleaning">Cleaning</option>
+                  <option value="ac-repair">AC Repair</option>
+                  <option value="appliance-repair">Appliance Repair</option>
                 </select>
               </div>
 

@@ -13,9 +13,10 @@ export const getBookings = async (req, res) => {
     if (role === 'admin') {
       // Admin sees all bookings
       result = await query(
-        `SELECT b.*, u.full_name as customer_name, u.email as customer_email, u.phone as customer_phone,
+        `SELECT b.*, s.price_range as service_price, u.full_name as customer_name, u.email as customer_email, u.phone as customer_phone,
          t.id as tech_id, tu.full_name as technician_name
          FROM bookings b
+         LEFT JOIN services s ON b.service_id = s.id
          LEFT JOIN users u ON b.customer_id = u.id
          LEFT JOIN technicians t ON b.technician_id = t.id
          LEFT JOIN users tu ON t.user_id = tu.id
@@ -30,8 +31,9 @@ export const getBookings = async (req, res) => {
       const techId = techResult.rows[0].id;
 
       result = await query(
-        `SELECT b.*, u.full_name as customer_name, u.email as customer_email, u.phone as customer_phone
+        `SELECT b.*, s.price_range as service_price, u.full_name as customer_name, u.email as customer_email, u.phone as customer_phone
          FROM bookings b
+         LEFT JOIN services s ON b.service_id = s.id
          LEFT JOIN users u ON b.customer_id = u.id
          WHERE b.technician_id = $1
          ORDER BY b.created_at DESC`,
@@ -40,9 +42,10 @@ export const getBookings = async (req, res) => {
     } else {
       // Customer sees their own bookings
       result = await query(
-        `SELECT b.*, t.id as tech_id, u.full_name as technician_name, u.phone as technician_phone,
+        `SELECT b.*, s.price_range as service_price, t.id as tech_id, u.full_name as technician_name, u.phone as technician_phone,
          r.id as review_id, r.rating as review_rating, r.comment as review_comment
          FROM bookings b
+         LEFT JOIN services s ON b.service_id = s.id
          LEFT JOIN technicians t ON b.technician_id = t.id
          LEFT JOIN users u ON t.user_id = u.id
          LEFT JOIN reviews r ON r.booking_id = b.id AND r.customer_id = $1

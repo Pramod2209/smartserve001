@@ -4,6 +4,7 @@ import DashboardLayout from '../../layouts/DashboardLayout';
 import Card from '../../components/Card';
 import Alert from '../../components/Alert';
 import { ADMIN_MENU } from '../../utils/menuConfig';
+import StaggeredMenu from '../../components/ui/StaggeredMenu';
 import { bookingsAPI, getUser, servicesAPI, techniciansAPI, usersAPI } from '../../utils/api';
 
 /**
@@ -17,6 +18,14 @@ const AdminDashboard = () => {
   const [bookings, setBookings] = useState([]);
   const [services, setServices] = useState([]);
   const [error, setError] = useState('');
+
+  const adminMenuItems = [
+    { label: 'Dashboard', ariaLabel: 'Go to admin dashboard', link: '/admin/dashboard' },
+    { label: 'Manage Services', ariaLabel: 'Manage services', link: '/admin/services' },
+    { label: 'Manage Technicians', ariaLabel: 'Manage technicians', link: '/admin/technicians' },
+    { label: 'Manage Bookings', ariaLabel: 'Manage bookings', link: '/admin/bookings' },
+    { label: 'User Management', ariaLabel: 'Manage users', link: '/admin/users' },
+  ];
 
   useEffect(() => {
     const loadStats = async () => {
@@ -60,7 +69,24 @@ const AdminDashboard = () => {
       userRole="admin"
       userName={currentUser?.fullName || 'Admin'}
       menuItems={ADMIN_MENU}
+      hideSidebar={true}
     >
+      <StaggeredMenu
+        className="admin-staggered-menu"
+        position="right"
+        items={adminMenuItems}
+        socialItems={[]}
+        displaySocials={false}
+        displayItemNumbering={true}
+        menuButtonColor="#1e3a8a"
+        openMenuButtonColor="#1e3a8a"
+        changeMenuColorOnOpen={true}
+        colors={['#2563eb', '#1e3a8a']}
+        logoUrl="/logo.png"
+        accentColor="#2563eb"
+        isFixed={true}
+        closeOnClickAway={true}
+      />
       {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
