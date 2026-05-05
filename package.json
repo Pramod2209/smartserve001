@@ -33,6 +33,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:server": "npm --prefix server run build",
+    "build:all": "npm run build && npm run build:server",
     "preview": "vite preview",
     "server:install": "cd server && npm install",
     "postinstall": "npm run server:install",
